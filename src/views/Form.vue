@@ -39,12 +39,28 @@
         form:{
         subject: "",
         description: ""
+      },
+      methodSave : "new"
       }
+    },
+
+    created(){
+      if(this.$route.params.index === 0 || this.$route.params.index !== undefined){
+        this.methodSave = "update";
+        let vests = JSON.parse(localStorage.getItem("vests"));
+        this.form = vests[this.$route.params.index];
       }
     },
 
     methods:{
       saveVestibular(){
+        if(this.methodSave === "update"){
+          let vests = JSON.parse(localStorage.getItem("vests"));
+          vests[this.$route.params.index] = this.form;
+          localStorage.setItem("vests", JSON.stringify(vests));
+          this.$router.push({name:"list"});
+          return;
+        }
         let vests = (localStorage.getItem("vests")) ? JSON.parse(localStorage.getItem("vests")) : [];
         vests.push(this.form);
         localStorage.setItem("vests", JSON.stringify(vests));
