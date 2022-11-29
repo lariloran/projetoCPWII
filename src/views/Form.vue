@@ -31,9 +31,11 @@
 </template>
 
 <script>
+import ToastMixin from '@/mixins/toastMixin.js';
+
   export default{
     name: "Form",
-
+    mixins:[ToastMixin],
     data(){
       return{
         form:{
@@ -58,12 +60,15 @@
           let vests = JSON.parse(localStorage.getItem("vests"));
           vests[this.$route.params.index] = this.form;
           localStorage.setItem("vests", JSON.stringify(vests));
+        this.showToast("success", "Sucesso!", "Tarefa atualizada com sucesso");
           this.$router.push({name:"list"});
           return;
         }
         let vests = (localStorage.getItem("vests")) ? JSON.parse(localStorage.getItem("vests")) : [];
         vests.push(this.form);
         localStorage.setItem("vests", JSON.stringify(vests));
+        this.showToast("success", "Sucesso!", "Tarefa criada com sucesso");
+
         this.$router.push({name:"list"});
       }
 
