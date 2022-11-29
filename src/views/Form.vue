@@ -18,7 +18,7 @@
         id="description"
         v-model="form.description"
         type="text"
-        placeholder="Ex: Vestibular 2023 acontecerá no dia XX.XX.XXXX"
+        placeholder="Ex: Vestibular 2023 acontecerá no dia XX.XX.XXXX às 14:00 horas"
         required
         autocomplete="off"></b-form-textarea>
       </b-form-group>
