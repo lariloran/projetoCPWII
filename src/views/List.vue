@@ -1,7 +1,8 @@
 <template>
   <div class="container mt-2">
     <div v-for="(vest, index) in vests" :key="index">
-      <b-card :title="vest.subject" class="mb-2">
+      <b-card :title="vest.name" class="mb-2">
+        <b-card-text>({{vest.initial}})</b-card-text>
         <b-card-text>{{vest.description}}</b-card-text>
 
         <b-button variant="outline-secondary" class="mr-2" @click="edit(index)">Editar</b-button>
