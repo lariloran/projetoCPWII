@@ -1,18 +1,31 @@
 <template>
   <div class="container mt-2">
-    <div v-for="(vest, index) in vests" :key="index">
-      <b-card :title="vest.name" class="mb-2">
-        <b-card-text>({{vest.initial}})</b-card-text>
+    <template v-if="isVestsEmpty">
+      <div class="empty-data mt-2">
+        <img src="../assets/images/empty-data.svg" class="empty-data-image">
+        <b-button 
+        variant="outline-primary" 
+        class="mt-2" 
+        size="lg"
+        to="/form"
+        >Criar vestibular</b-button>
+      </div>>
+    </template>
+<template v-else>
+  <div v-for="(vest, index) in vests" :key="index">
+      <b-card :title="vest.initial" class="mb-2">
+        <b-card-text>[{{vest.name}}]</b-card-text>
         <b-card-text>{{vest.description}}</b-card-text>
 
         <b-button variant="outline-secondary" class="mr-2" @click="edit(index)">Editar</b-button>
         <b-button variant="outline-danger" class="mr-2"  @click="remove(vest,index)">Excluir</b-button>
       </b-card>
     </div>
+</template>
 
-    <b-modal ref="modalRemove" hide-footer title="Exclusão de tarefa">
+    <b-modal ref="modalRemove" hide-footer title="Exclusão de vestibular">
       <div class="d-block text-center">
-        Deseja realmente excluir {{vestSelected.subject}} ?
+        Deseja realmente excluir {{vestSelected.name}} ?
       </div>
       <div class="mt-3 d-flex justify-content-end" >
         
@@ -58,7 +71,26 @@ export default {
       localStorage.setItem("vests", JSON.stringify(this.vests));
       this.hideModal();
     }
+  },
+
+  computed:{
+    isVestsEmpty(){
+      return this.vests.length === 0;
+    }
   }
 
 }
 </script>
+
+<style>
+.empty-data{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.empty-data-image{
+  width: 300px;
+  height: 300px;
+}
+</style>
