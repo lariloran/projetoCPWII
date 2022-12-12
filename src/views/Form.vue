@@ -58,6 +58,15 @@
         :state="dat_endValidation"></b-form-input>
       </b-form-group>
 
+      <b-form-group label="Status" label-for="status">
+        <b-form-select 
+        id="status"
+        v-model="form.status"
+        :options="optionsStatus"
+        >
+      </b-form-select>
+      </b-form-group>
+
       <b-form-group label="Descrição(opcional)" label-for="description">
         <b-form-textarea 
         id="description"
@@ -71,7 +80,7 @@
        variant="outline-primary" 
        @click="saveVestibular"
        >
-          Salvar
+       <i class="fa fa-save"></i>
       </b-button>
 
     </b-form>
@@ -81,7 +90,9 @@
 <script>
 import ToastMixin from '@/mixins/toastMixin.js';
 import {required, minLength} from "vuelidate/lib/validators";
-var i = 0;
+import VestsModel from "@/models/VestsModel";
+import Status from "@/valueObjects/status";
+
   export default{
     name: "Form",
     mixins:[ToastMixin],
@@ -93,9 +104,15 @@ var i = 0;
         edital:"",
         dat_ini:"",
         dat_end: "",
-        description: ""
+        description: "",
+        status: Status.OPEN
       },
-      methodSave : "new"
+      methodSave : "new",
+      optionsStatus:[
+        {value: Status.OPEN, text: "Aberto" },
+        {value: Status.FINISHED, text: "Concluído" },
+        {value: Status.ARCHIVED, text: "Arquivado" }
+      ]
       }
     },
 
@@ -121,27 +138,27 @@ var i = 0;
     
       }
     } ,
-    created(){
-      if(this.$route.params.index === 0 || this.$route.params.index !== undefined){
+    async created(){
+      if(this.$route.params.vestId){
         this.methodSave = "update";
-        let vests = JSON.parse(localStorage.getItem("vests"));
-        this.form = vests[this.$route.params.index];
+        this.form = await VestsModel.find(this.$route.params.vestId);
       }
     },
 
     methods:{
       saveVestibular(){
+        this.$v.$touch();
+        if(this.$v.$error) return;
+
         if(this.methodSave === "update"){
-          let vests = JSON.parse(localStorage.getItem("vests"));
-          vests[this.$route.params.index] = this.form;
-          localStorage.setItem("vests", JSON.stringify(vests));
-        this.showToast("success", "Sucesso!", "Tarefa atualizada com sucesso");
+          this.form.save();
+       
+          this.showToast("success", "Sucesso!", "Vestibular criado com sucesso");
           this.$router.push({name:"list"});
           return;
         }
-        let vests = (localStorage.getItem("vests")) ? JSON.parse(localStorage.getItem("vests")) : [];
-        vests.push(this.form);
-        localStorage.setItem("vests", JSON.stringify(vests));
+        const vest = new VestsModel(this.form);
+        vest.save();
         this.showToast("success", "Sucesso!", "Vestibular criado com sucesso");
 
         this.$router.push({name:"list"});
@@ -154,7 +171,6 @@ var i = 0;
           return null;
         }
         else{
-          i++;
           return !this.$v.form.name.$error;
         }
      
@@ -164,7 +180,6 @@ var i = 0;
           return null;
         }
         else{
-          i++;
           return !this.$v.form.initial.$error;
         }
       },
@@ -173,7 +188,6 @@ var i = 0;
           return null;
         }
         else{
-          i++;
           return !this.$v.form.edital.$error;
         }
       },
@@ -182,7 +196,6 @@ var i = 0;
           return null;
         }
         else{
-          i++;
           return !this.$v.form.dat_ini.$error;
         }
       },
@@ -191,7 +204,6 @@ var i = 0;
           return null;
         }
         else{
-          i++;
           return !this.$v.form.dat_end.$error;
         }
       },
